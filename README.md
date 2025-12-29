@@ -18,7 +18,7 @@ narad-pms/
 
 ### Backend (API)
 - **Laravel 12** - PHP Framework
-- **MySQL** - Database
+- **MySQL** - Database (narad-pms)
 - **JWT Authentication** - API Security
 - **RESTful API** - Clean API Design
 
@@ -36,29 +36,52 @@ narad-pms/
 ### Prerequisites
 - PHP 8.2+
 - Composer
-- Node.js 18+
+- Node.js 24.12.0+ (updated)
 - MySQL
 - XAMPP (for local development)
 
-### Backend Setup
+### Setup Instructions
+
+#### 1. Backend Setup
 ```bash
 cd backend
 composer install
 cp .env.example .env
 php artisan key:generate
+
+# Create MySQL database 'narad-pms' first
 php artisan migrate
 php artisan serve
 ```
 
-### Frontend Setup
+#### 2. Frontend Setup
 ```bash
 cd frontend
 npm install
+
+# Fix PowerShell execution policy if needed:
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 npm run dev
 ```
 
-## Features (Planned)
+## Project Status
 
+### Completed
+- [x] Project structure created
+- [x] Laravel 12.44.0 backend installed
+- [x] React + TypeScript frontend setup
+- [x] MySQL database configuration
+- [x] Node.js updated to v24.12.0
+- [x] NPM dependencies installed
+- [x] PowerShell execution policy configured
+
+### In Progress
+- [ ] Database migration setup
+- [ ] API routes configuration
+- [ ] Frontend-backend integration
+
+### Planned Features
 - [ ] User Authentication & Authorization
 - [ ] Project Management
 - [ ] Task Management
@@ -68,10 +91,25 @@ npm run dev
 - [ ] Dashboard & Analytics
 - [ ] Mobile App (Future)
 
-## Development
+## Development URLs
 
-- Backend API: `http://localhost:8000`
-- Frontend Web: `http://localhost:5173`
+- **Backend API**: `http://localhost:8000`
+- **Frontend Web**: `http://localhost:5173`
+- **Database**: `narad-pms` (MySQL)
+
+## Troubleshooting
+
+### PowerShell Script Execution Error
+If you get "execution policies" error:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Node.js Version Issues
+Ensure Node.js v20.19+ or v22.12+ is installed:
+```bash
+node --version  # Should show v24.12.0+
+```
 
 ## License
 
