@@ -4,10 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    // Health check
-    Route::get('/health', function () {
-        return response()->json(['status' => 'ok', 'version' => 'v1']);
-    });
+    Route::post('/super/login', [\App\Http\Controllers\SuperAdminController::class, 'login']);
 
     // Auth routes
     Route::prefix('auth')->group(function () {
