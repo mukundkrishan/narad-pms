@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Traits\ApiResponse;
 
 class SuperAdminController extends Controller
 {
+    use ApiResponse;
+
     public function login(Request $request)
     {
         $request->validate([
@@ -20,18 +24,16 @@ class SuperAdminController extends Controller
                    ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
-            $token = $user->createToken('super-admin-token')->plainTextToken;
+            $token = JWTAuth::fromUser($user);
             
-            return response()->json([
-                'success' => true,
+            return $this->successResponse([
                 'user' => $user,
                 'token' => $token,
-            ]);
+                'token_type' => 'bearer',
+                'expires_in' => config('jwt.ttl') * 60
+            ], 'Super admin login successful');
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid credentials',
-        ], 401);
+        return $this->errorResponse('Invalid credentials', 401);
     }
 }

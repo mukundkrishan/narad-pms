@@ -21,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \App\Http\Middleware\Cors::class,
         ]);
+        $middleware->alias([
+            'cors' => \App\Http\Middleware\HandleCors::class,
+            'organization.context' => \App\Http\Middleware\OrganizationContext::class,
+            'permission' => \App\Http\Middleware\CheckPermission::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

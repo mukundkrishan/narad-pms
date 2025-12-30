@@ -11,9 +11,9 @@ export const AUTH_ENDPOINTS = {
   ME: `${API_BASE_URL}/auth/me`,
 };
 
-// API helper function
+// API helper function with improved error handling
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || localStorage.getItem('super_token');
   
   const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -29,11 +29,31 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
     },
   };
 
-  const response = await fetch(url, config);
-  
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  try {
+    const response = await fetch(url, config);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('API Request Error:', error);
+    throw error;
   }
-  
-  return response.json();
 };
+
+// Standardized response format
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  errors?: any;
+  pagination?: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}

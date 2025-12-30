@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AUTH_ENDPOINTS, apiRequest } from '../api'
+import { useAuth } from '../auth/AuthContext'
 import './SuperLogin.css'
 
 const SuperLogin = () => {
@@ -9,6 +10,7 @@ const SuperLogin = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,10 +24,12 @@ const SuperLogin = () => {
       })
 
       if (data.success) {
-        if (data.token) {
-          localStorage.setItem('super_token', data.token)
+        if (data.data.token) {
+          localStorage.setItem('token', data.data.token)
+          localStorage.setItem('super_token', data.data.token)
         }
-        navigate('/super/dashboard')
+        // Force page reload to trigger AuthContext
+        window.location.href = '/dashboard'
       } else {
         setError(data.message || 'Login failed')
       }

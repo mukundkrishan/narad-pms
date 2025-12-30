@@ -2,33 +2,32 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SuperAdminController;
 
-Route::prefix('v1')->group(function () {
-    Route::post('/super/login', [\App\Http\Controllers\SuperAdminController::class, 'login']);
-
-    // Auth routes
+Route::prefix('v1')->middleware('cors')->group(function () {
+    // Auth routes (public)
     Route::prefix('auth')->group(function () {
-        Route::post('/login', function () {
-            return response()->json(['message' => 'Login endpoint']);
-        });
-        Route::post('/register', function () {
-            return response()->json(['message' => 'Register endpoint']);
-        });
-        Route::post('/logout', function () {
-            return response()->json(['message' => 'Logout endpoint']);
-        });
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+        Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api');
+        Route::get('/me', [AuthController::class, 'me'])->middleware('auth:api');
     });
 
-    // Protected routes
-    Route::middleware('auth:sanctum')->group(function () {
+    // Super admin login
+    Route::post('/super/login', [SuperAdminController::class, 'login']);
+
+    // Protected routes with organization context
+    Route::middleware(['auth:api', 'organization.context'])->group(function () {
         Route::get('/user', function (Request $request) {
-            return $request->user();
+            return response()->json(['success' => true, 'user' => $request->user()]);
         });
 
-        // Projects
-        Route::apiResource('projects', \App\Http\Controllers\ProjectController::class);
-        
-        // Tasks
-        Route::apiResource('tasks', \App\Http\Controllers\TaskController::class);
+        // Admin routes
+        Route::middleware('permission:admin')->group(function () {
+            Route::get('/organizations', function () {
+                return response()->json(['success' => true, 'message' => 'Organizations endpoint']);
+            });
+        });
     });
 });
