@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AUTH_ENDPOINTS, apiRequest } from '../api'
 import './SuperLogin.css'
 
 const SuperLogin = () => {
@@ -15,24 +16,15 @@ const SuperLogin = () => {
     setError('')
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/super/login', {
+      const data = await apiRequest(AUTH_ENDPOINTS.SUPER_LOGIN, {
         method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
         body: JSON.stringify({ email, password }),
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
-        // Store token if provided
+      if (data.success) {
         if (data.token) {
           localStorage.setItem('super_token', data.token)
         }
-        // Redirect to super admin dashboard
         navigate('/super/dashboard')
       } else {
         setError(data.message || 'Login failed')
