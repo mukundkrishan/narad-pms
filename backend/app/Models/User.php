@@ -13,13 +13,16 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
+        'mobile',
+        'address',
         'password',
         'corporate_id',
-        'user_type',
-        'designation',
-        'permissions',
-        'is_active',
+        'role',
+        'role_id',
+        'status',
     ];
 
     protected $hidden = [
@@ -30,8 +33,6 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'permissions' => 'array',
-        'is_active' => 'boolean',
     ];
 
     public function getJWTIdentifier()
@@ -41,7 +42,21 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'corporate_id' => $this->corporate_id,
+            'role' => $this->role,
+            'role_id' => $this->role_id,
+        ];
+    }
+
+    // Role constants
+    const ROLE_SUPER_ADMIN = 1;
+    const ROLE_ADMIN = 2;
+    const ROLE_USER = 3;
+
+    public function isAdmin()
+    {
+        return $this->role_id == self::ROLE_ADMIN;
     }
 
     public function corporate()
@@ -52,5 +67,10 @@ class User extends Authenticatable implements JWTSubject
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
     }
 }

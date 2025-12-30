@@ -3,7 +3,11 @@ import { AuthProvider } from './auth/AuthContext'
 import Welcome from './components/Welcome'
 import Login from './components/Login'
 import SuperLogin from './components/SuperLogin'
-import Dashboard from './components/Dashboard'
+import SuperAdminDashboard from './components/super_admin/SuperAdminDashboard'
+import Organizations from './components/super_admin/Organizations'
+import Users from './components/super_admin/Users'
+import Settings from './components/super_admin/Settings'
+import AdminDashboard from './components/admin/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -19,7 +23,35 @@ function App() {
             path="/dashboard" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/super_admin/dashboard" 
+            element={
+              <ProtectedRoute userType="super_admin">
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/organizations" 
+            element={<Organizations />} 
+          />
+          <Route 
+            path="/organization/:organizationId/users" 
+            element={
+              <ProtectedRoute userType="super_admin">
+                <Users />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } 
           />

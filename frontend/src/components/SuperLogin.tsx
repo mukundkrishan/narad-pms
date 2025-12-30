@@ -24,12 +24,15 @@ const SuperLogin = () => {
       })
 
       if (data.success) {
-        if (data.data.token) {
-          localStorage.setItem('token', data.data.token)
-          localStorage.setItem('super_token', data.data.token)
-        }
-        // Force page reload to trigger AuthContext
-        window.location.href = '/dashboard'
+        const token = data.data.token;
+        const user = data.data.user;
+        
+        // Store token and user data
+        localStorage.setItem('token', token);
+        localStorage.setItem('super_token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        window.location.href = '/super_admin/dashboard'
       } else {
         setError(data.message || 'Login failed')
       }

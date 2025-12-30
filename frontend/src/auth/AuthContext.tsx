@@ -22,14 +22,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem('token') || localStorage.getItem('super_token')
+  );
 
   useEffect(() => {
-    if (token) {
+    if (token && !user) {
       fetchUser();
     }
-  }, [token]);
+  }, [token, user]);
 
   const fetchUser = async () => {
     try {
@@ -53,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(response.data.token);
         setUser(response.data.user);
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         return true;
       }
       return false;
@@ -66,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('super_token');
+    localStorage.removeItem('user');
   };
 
   const hasPermission = (permission: string): boolean => {

@@ -11,6 +11,29 @@ export const AUTH_ENDPOINTS = {
   ME: `${API_BASE_URL}/auth/me`,
 };
 
+// Dashboard endpoints
+export const DASHBOARD_ENDPOINTS = {
+  SUPER_ADMIN_STATS: `${API_BASE_URL}/dashboard/super-admin`,
+  ADMIN_STATS: `${API_BASE_URL}/dashboard/admin`,
+};
+
+// Organization endpoints
+export const ORGANIZATION_ENDPOINTS = {
+  LIST: `${API_BASE_URL}/organizations`,
+  CREATE: `${API_BASE_URL}/organizations`,
+  SHOW: (id: number) => `${API_BASE_URL}/organizations/${id}`,
+  UPDATE: (id: number) => `${API_BASE_URL}/organizations/${id}`,
+  DELETE: (id: number) => `${API_BASE_URL}/organizations/${id}`,
+};
+
+// Settings endpoints
+export const SETTINGS_ENDPOINTS = {
+  LIST: `${API_BASE_URL}/settings`,
+  STORE: `${API_BASE_URL}/settings`,
+  SHOW: (key: string) => `${API_BASE_URL}/settings/${key}`,
+  DELETE: (key: string) => `${API_BASE_URL}/settings/${key}`,
+};
+
 // API helper function with improved error handling
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token') || localStorage.getItem('super_token');
@@ -31,6 +54,14 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
 
   try {
     const response = await fetch(url, config);
+    
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('super_token');
+      window.location.href = '/login';
+      throw new Error('Unauthorized - redirecting to login');
+    }
+    
     const data = await response.json();
     
     if (!response.ok) {

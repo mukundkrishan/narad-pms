@@ -34,10 +34,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <aside className="dashboard-sidebar">
           <nav className="sidebar-nav">
             <ul>
-              <li><a href="/dashboard">Dashboard</a></li>
+              <li><a href="/super_admin/dashboard">Dashboard</a></li>
               <li><a href="/organizations">Organizations</a></li>
-              <li><a href="/users">Users</a></li>
-              <li><a href="/modules">Modules</a></li>
               <li><a href="/settings">Settings</a></li>
             </ul>
           </nav>
@@ -51,7 +49,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
       {/* Footer */}
       <footer className="dashboard-footer">
-        <p>&copy; 2024 Narad Core. All rights reserved.</p>
+        <p>&copy; 2026 Narad PMS. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Corporate extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -16,6 +17,13 @@ class Corporate extends Model
         'phone',
         'address',
         'logo',
+        'organization_code',
+        'user_allowed',
+        'valid_from',
+        'valid_to',
+        'status',
+        'last_payment_date',
+        'last_payment_amount',
         'settings',
         'is_active',
     ];
@@ -23,6 +31,10 @@ class Corporate extends Model
     protected $casts = [
         'settings' => 'array',
         'is_active' => 'boolean',
+        'valid_from' => 'date',
+        'valid_to' => 'date',
+        'last_payment_date' => 'date',
+        'last_payment_amount' => 'decimal:2',
     ];
 
     public function users()

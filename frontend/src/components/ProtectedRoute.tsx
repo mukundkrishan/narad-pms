@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,18 +12,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   permission, 
   userType 
 }) => {
-  const { isAuthenticated, user, hasPermission } = useAuth();
+  const token = localStorage.getItem('token') || localStorage.getItem('super_token');
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  console.log('ProtectedRoute Debug:', { token: !!token, user, userType });
+
+  if (!token || !user) {
+    return <Navigate to="/super/login" replace />;
   }
 
   if (userType && user?.user_type !== userType) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  if (permission && !hasPermission(permission)) {
-    return <Navigate to="/unauthorized" replace />;
+    console.log('User type mismatch:', user?.user_type, 'expected:', userType);
+    return <Navigate to="/super/login" replace />;
   }
 
   return <>{children}</>;
