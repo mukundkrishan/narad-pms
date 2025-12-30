@@ -13,7 +13,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (user: User, token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
   hasPermission: (permission: string) => boolean;
@@ -47,24 +47,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const response = await apiRequest(AUTH_ENDPOINTS.LOGIN, {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.success) {
-        setToken(response.data.token);
-        setUser(response.data.user);
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        return true;
-      }
-      return false;
-    } catch (error) {
-      return false;
-    }
+  const login = (userData: User, userToken: string) => {
+    setToken(userToken);
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
@@ -73,6 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('token');
     localStorage.removeItem('super_token');
     localStorage.removeItem('user');
+    localStorage.removeItem('corporate');
   };
 
   const hasPermission = (permission: string): boolean => {

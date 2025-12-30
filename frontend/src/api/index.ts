@@ -6,6 +6,7 @@ export const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 export const AUTH_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
   SUPER_LOGIN: `${API_BASE_URL}/super/login`,
+  CORPORATE_LOGIN: (corporateName: string) => `${API_BASE_URL}/${corporateName}/login`,
   LOGOUT: `${API_BASE_URL}/auth/logout`,
   REFRESH: `${API_BASE_URL}/auth/refresh`,
   ME: `${API_BASE_URL}/auth/me`,
@@ -13,8 +14,19 @@ export const AUTH_ENDPOINTS = {
 
 // Dashboard endpoints
 export const DASHBOARD_ENDPOINTS = {
-  SUPER_ADMIN_STATS: `${API_BASE_URL}/dashboard/super-admin`,
-  ADMIN_STATS: `${API_BASE_URL}/dashboard/admin`,
+  SUPER_ADMIN_STATS: `${API_BASE_URL}/super-admin/dashboard`,
+  CORPORATE_STATS: `${API_BASE_URL}/corporate/dashboard`,
+};
+
+// Corporate endpoints
+export const CORPORATE_ENDPOINTS = {
+  DASHBOARD: `${API_BASE_URL}/corporate/dashboard`,
+  USERS: `${API_BASE_URL}/corporate/users`,
+};
+
+// Super Admin endpoints
+export const SUPER_ADMIN_ENDPOINTS = {
+  DASHBOARD: `${API_BASE_URL}/super-admin/dashboard`,
 };
 
 // Organization endpoints
@@ -56,9 +68,21 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
     const response = await fetch(url, config);
     
     if (response.status === 401) {
+      const corporate = localStorage.getItem('corporate');
+      const isSuperAdmin = localStorage.getItem('super_token');
+      
       localStorage.removeItem('token');
       localStorage.removeItem('super_token');
-      window.location.href = '/login';
+      
+      if (isSuperAdmin) {
+        window.location.href = '/super/login';
+      } else if (corporate) {
+        const corporateData = JSON.parse(corporate);
+        window.location.href = `/${corporateData.organization_code}/login`;
+      } else {
+        window.location.href = '/';
+      }
+      
       throw new Error('Unauthorized - redirecting to login');
     }
     

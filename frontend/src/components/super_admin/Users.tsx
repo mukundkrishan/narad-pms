@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiRequest, API_BASE_URL } from '../../api';
+import { formatDate } from '../../utils/dateUtils';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import './Users.css';
 
@@ -236,7 +237,7 @@ const Users: React.FC = () => {
                         <span className="slider"></span>
                       </label>
                     </td>
-                    <td>{new Date(user.created_at).toLocaleDateString('en-GB')}</td>
+                    <td>{formatDate(user.created_at)}</td>
                     <td>
                       <button className="action-btn edit" onClick={() => handleEdit(user)} title="Edit">
                         ✏️

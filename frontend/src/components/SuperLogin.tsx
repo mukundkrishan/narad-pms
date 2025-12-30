@@ -30,9 +30,11 @@ const SuperLogin = () => {
         // Store token and user data
         localStorage.setItem('token', token);
         localStorage.setItem('super_token', token);
-        localStorage.setItem('user', JSON.stringify(user));
         
-        window.location.href = '/super_admin/dashboard'
+        // Update auth context
+        login(user, token);
+        
+        navigate('/super_admin/dashboard');
       } else {
         setError(data.message || 'Login failed')
       }

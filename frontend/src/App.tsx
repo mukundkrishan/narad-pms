@@ -7,6 +7,11 @@ import SuperAdminDashboard from './components/super_admin/SuperAdminDashboard'
 import Organizations from './components/super_admin/Organizations'
 import Users from './components/super_admin/Users'
 import Settings from './components/super_admin/Settings'
+import CorporateLogin from './components/corporate/CorporateLogin'
+import CorporateDashboard from './components/corporate/CorporateDashboard'
+import CorporateUsers from './components/corporate/CorporateUsers'
+import CorporateRoles from './components/corporate/CorporateRoles'
+import CorporateSettings from './components/corporate/CorporateSettings'
 import AdminDashboard from './components/admin/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
@@ -19,11 +24,44 @@ function App() {
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/super/login" element={<SuperLogin />} />
+          <Route path="/:corporateName/login" element={<CorporateLogin />} />
           <Route 
             path="/dashboard" 
             element={
               <ProtectedRoute>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/:corporateName/dashboard" 
+            element={
+              <ProtectedRoute>
+                <CorporateDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/:corporateName/users" 
+            element={
+              <ProtectedRoute>
+                <CorporateUsers />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/:corporateName/roles" 
+            element={
+              <ProtectedRoute>
+                <CorporateRoles />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/:corporateName/settings" 
+            element={
+              <ProtectedRoute>
+                <CorporateSettings />
               </ProtectedRoute>
             } 
           />

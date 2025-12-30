@@ -7,6 +7,11 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CorporateController;
+use App\Http\Controllers\CorporateAuthController;
+use App\Http\Controllers\Corporate\CorporateDashboardController;
+use App\Http\Controllers\Corporate\CorporateUsersController;
+use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SettingController;
 
 Route::prefix('v1')->middleware('cors')->group(function () {
@@ -20,12 +25,35 @@ Route::prefix('v1')->middleware('cors')->group(function () {
 
     // Super admin login
     Route::post('/super/login', [SuperAdminController::class, 'login']);
+    
+    // Corporate info endpoint (public)
+    Route::get('/organization/{organizationCode}', [CorporateController::class, 'getByCode']);
+    
+    // Corporate authentication
+    Route::prefix('{corporateName}')->group(function () {
+        Route::post('/login', [CorporateAuthController::class, 'login']);
+        Route::post('/logout', [CorporateAuthController::class, 'logout'])->middleware('auth:api');
+        Route::post('/refresh', [CorporateAuthController::class, 'refresh'])->middleware('auth:api');
+        Route::get('/me', [CorporateAuthController::class, 'me'])->middleware('auth:api');
+    });
 
     // Organization management (public for testing)
     Route::apiResource('organizations', OrganizationController::class);
     
-    // Public dashboard endpoint for testing
+    // Dashboard endpoints (public for testing)
     Route::get('/dashboard/super-admin-test', [DashboardController::class, 'superAdminStats']);
+    
+    // Corporate API endpoints (with auth)
+    Route::prefix('corporate')->middleware('auth:api')->group(function () {
+        Route::get('/dashboard', [CorporateDashboardController::class, 'dashboard']);
+        Route::get('/users', [CorporateUsersController::class, 'index']);
+        Route::post('/users', [CorporateUsersController::class, 'store']);
+    });
+    
+    // Super Admin API endpoints (with auth)
+    Route::prefix('super-admin')->middleware('auth:api')->group(function () {
+        Route::get('/dashboard', [SuperAdminDashboardController::class, 'dashboard']);
+    });
     
     // Organization users management
     Route::prefix('organization/{organizationId}/users')->group(function () {
@@ -43,7 +71,6 @@ Route::prefix('v1')->middleware('cors')->group(function () {
 
         // Dashboard endpoints
         Route::get('/dashboard/super-admin', [DashboardController::class, 'superAdminStats']);
-        Route::get('/dashboard/admin', [DashboardController::class, 'adminStats']);
 
         // Settings endpoints
         Route::get('/settings', [SettingController::class, 'index']);

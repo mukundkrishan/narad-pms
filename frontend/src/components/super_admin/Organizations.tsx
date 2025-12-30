@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest, ORGANIZATION_ENDPOINTS } from '../../api';
+import { formatDate } from '../../utils/dateUtils';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import { useNavigate } from 'react-router-dom';
 import './Organizations.css';
@@ -226,7 +227,7 @@ const Organizations: React.FC = () => {
                   <td>{org.organization_code}</td>
                   <td>{org.email}</td>
                   <td>{org.users_count}/{org.user_allowed}</td>
-                  <td>{formatDateDisplay(org.valid_to)}</td>
+                  <td>{formatDate(org.valid_to)}</td>
                   <td>
                     <label className="toggle-switch">
                       <input 
@@ -237,7 +238,7 @@ const Organizations: React.FC = () => {
                       <span className="slider"></span>
                     </label>
                   </td>
-                  <td>{org.last_payment_amount || '0.00'} {org.last_payment_date && `(${formatDateDisplay(org.last_payment_date)})`}</td>
+                  <td>{org.last_payment_amount || '0.00'} {org.last_payment_date && `(${formatDate(org.last_payment_date)})`}</td>
                   <td>
                     <button className="action-btn edit" onClick={() => handleEdit(org)} title="Edit">
                       ✏️

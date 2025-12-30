@@ -94,21 +94,38 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $corporateId = $user->corporate_id;
+        $corporate = Corporate::find($corporateId);
 
         $stats = [
             'team_members' => User::where('corporate_id', $corporateId)->count(),
-            'organization_info' => Corporate::find($corporateId),
-            'recent_activities' => ActivityLog::where('corporate_id', $corporateId)
-                ->with('user')
-                ->latest()
-                ->take(10)
-                ->get(),
+            'organization_info' => $corporate,
+            'recent_activities' => $this->getCorporateRecentActivities($corporateId),
             'user_roles' => User::where('corporate_id', $corporateId)
-                ->selectRaw('user_type, COUNT(*) as count')
-                ->groupBy('user_type')
+                ->selectRaw('role_id, COUNT(*) as count')
+                ->groupBy('role_id')
                 ->get(),
         ];
 
         return $this->successResponse($stats, 'Admin dashboard data retrieved');
+    }
+    
+    private function getCorporateRecentActivities($corporateId)
+    {
+        $activities = [];
+        
+        // Recent users in this corporate
+        $recentUsers = User::where('corporate_id', $corporateId)
+            ->latest()
+            ->take(3)
+            ->get();
+        
+        foreach ($recentUsers as $user) {
+            $activities[] = [
+                'time' => $user->created_at->diffForHumans(),
+                'text' => "User '{$user->first_name} {$user->last_name}' joined"
+            ];
+        }
+        
+        return collect($activities)->take(5)->values()->all();
     }
 }

@@ -19,21 +19,23 @@ class SuperAdminController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)
-                   ->where('user_type', 'super_admin')
-                   ->first();
+        $user = User::where('email', $request->email)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            $token = JWTAuth::fromUser($user);
-            
-            return $this->successResponse([
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => config('jwt.ttl') * 60
-            ], 'Super admin login successful');
+        if (!$user || $user->role_id !== User::ROLE_SUPER_ADMIN) {
+            return $this->errorResponse('Invalid credentials', 401);
         }
 
-        return $this->errorResponse('Invalid credentials', 401);
+        if (!Hash::check($request->password, $user->password)) {
+            return $this->errorResponse('Invalid credentials', 401);
+        }
+
+        $token = JWTAuth::fromUser($user);
+        
+        return $this->successResponse([
+            'user' => $user,
+            'token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => config('jwt.ttl') * 60
+        ], 'Super admin login successful');
     }
 }

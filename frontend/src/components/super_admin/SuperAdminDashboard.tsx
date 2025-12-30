@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
-import { apiRequest, DASHBOARD_ENDPOINTS } from '../../api';
+import { apiRequest, SUPER_ADMIN_ENDPOINTS } from '../../api';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import './SuperAdminDashboard.css';
 
@@ -27,7 +27,7 @@ const SuperAdminDashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     try {
       console.log('Fetching dashboard data...');
-      const response = await apiRequest(DASHBOARD_ENDPOINTS.SUPER_ADMIN_STATS);
+      const response = await apiRequest(SUPER_ADMIN_ENDPOINTS.DASHBOARD);
       console.log('Dashboard response:', response);
       if (response.success) {
         setStats(response.data);
