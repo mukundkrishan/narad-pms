@@ -15,12 +15,25 @@ const Welcome = () => {
           </div>
           <h2>Project Management Reimagined</h2>
           <p>Transform your workflow with intelligent project management</p>
-          <button 
-            className="cta-primary"
-            onClick={() => navigate('/login')}
-          >
-            Get Started
-          </button>
+          <div className="login-buttons">
+            <button 
+              className="cta-primary"
+              onClick={() => navigate('/super/login')}
+            >
+              Super Admin Login
+            </button>
+            <button 
+              className="cta-secondary"
+              onClick={() => {
+                const organizationCode = prompt('Enter your organization code:');
+                if (organizationCode) {
+                  navigate(`/${organizationCode}/login`);
+                }
+              }}
+            >
+              Corporate Login
+            </button>
+          </div>
         </div>
         <div className="hero-visual">
           <div className="floating-card card-1">📊</div>

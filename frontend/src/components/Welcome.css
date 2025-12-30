@@ -100,6 +100,32 @@
   box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
 }
 
+.cta-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+
+.cta-secondary:hover {
+  background: white;
+  color: #667eea;
+  transform: translateY(-3px) scale(1.05);
+}
+
+.login-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
 .hero-visual {
   flex: 1;
   position: relative;
@@ -334,6 +360,15 @@
   
   .stats-card {
     grid-template-columns: 1fr;
+  }
+  
+  .login-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .cta-secondary {
+    margin-left: 0;
   }
   
   .hero-visual {

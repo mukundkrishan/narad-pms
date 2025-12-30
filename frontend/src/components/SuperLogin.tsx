@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AUTH_ENDPOINTS, apiRequest } from '../api'
-import './Login.css'
+import { useAuth } from '../auth/AuthContext'
+import './SuperLogin.css'
 
-const Login = () => {
+const SuperLogin = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -16,7 +18,7 @@ const Login = () => {
     setError('')
 
     try {
-      const data = await apiRequest(AUTH_ENDPOINTS.LOGIN, {
+      const data = await apiRequest(AUTH_ENDPOINTS.SUPER_LOGIN, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       })
@@ -27,9 +29,12 @@ const Login = () => {
         
         // Store token and user data
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('super_token', token);
         
-        window.location.href = '/dashboard'
+        // Update auth context
+        login(user, token);
+        
+        navigate('/super_admin/dashboard');
       } else {
         setError(data.message || 'Login failed')
       }
@@ -41,17 +46,17 @@ const Login = () => {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <div className="logo-small">
-            <div className="logo-circle-small"></div>
-            <h2>Narad PMS</h2>
+    <div className="super-login-container">
+      <div className="super-login-card">
+        <div className="super-login-header">
+          <div className="super-logo">
+            <div className="logo-icon">⚡</div>
+            <h2>Super Admin</h2>
           </div>
-          <p>Welcome back! Please sign in to your account.</p>
+          <p>Narad PMS - System Administration</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="login-form">
+        <form onSubmit={handleSubmit} className="super-login-form">
           {error && (
             <div className="error-message">
               {error}
@@ -65,7 +70,7 @@ const Login = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="super@admin.com"
               required
               disabled={loading}
             />
@@ -78,18 +83,22 @@ const Login = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Enter super admin password"
               required
               disabled={loading}
             />
           </div>
           
-          <button type="submit" className="login-button" disabled={loading}>
-            {loading ? 'Signing In...' : 'Sign In'}
+          <button 
+            type="submit" 
+            className="super-login-button"
+            disabled={loading}
+          >
+            {loading ? 'Signing In...' : 'Sign In as Super Admin'}
           </button>
         </form>
         
-        <div className="login-footer">
+        <div className="super-login-footer">
           <button 
             className="back-button"
             onClick={() => navigate('/')}
@@ -103,4 +112,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SuperLogin
